@@ -7,10 +7,10 @@ if (!is_logged_in() || !is_admin()) {
 }
 
 // Statistik Dashboard
-$total_buku       = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM buku"))['total'];
-$total_anggota    = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role='anggota'"))['total'];
-$total_peminjaman = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM peminjaman WHERE status='dipinjam'"))['total'];
-$total_terlambat  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM peminjaman WHERE status='terlambat'"))['total'];
+$total_buku        = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM buku"))['total'];
+$total_anggota     = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM users WHERE role='anggota'"))['total'];
+$total_peminjaman  = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM peminjaman WHERE status='dipinjam'"))['total'];
+$total_terlambat   = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS total FROM peminjaman WHERE status='terlambat'"))['total'];
 
 // Data peminjaman terbaru
 $peminjaman_terbaru = mysqli_query($conn, "
@@ -62,21 +62,51 @@ $peminjaman_terbaru = mysqli_query($conn, "
             }
         }
 
+        /* STAT CARD BERWARNA */
         .stat-card {
             border: none;
             border-radius: 14px;
-            background: #ffffff;
-            box-shadow: 0 10px 26px rgba(15, 23, 42, .08);
+            color: #f9fafb;
             padding: 16px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform .18s ease, box-shadow .18s ease;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, .18);
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 18px 40px rgba(15, 23, 42, .15);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, .28);
+            filter: brightness(1.05);
+        }
+
+        .stat-card .label {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            opacity: .9;
+        }
+
+        .stat-card .value {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        .stat-card.total-buku {
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+        }
+
+        .stat-card.total-anggota {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
+        .stat-card.sedang-dipinjam {
+            background: linear-gradient(135deg, #facc15, #f97316);
+        }
+
+        .stat-card.terlambat {
+            background: linear-gradient(135deg, #ef4444, #b91c1c);
         }
 
         .stat-icon {
@@ -87,7 +117,7 @@ $peminjaman_terbaru = mysqli_query($conn, "
             align-items: center;
             justify-content: center;
             font-size: 22px;
-            color: #ffffff;
+            background: rgba(15, 23, 42, .22);
         }
 
         .card-section {
@@ -97,6 +127,33 @@ $peminjaman_terbaru = mysqli_query($conn, "
             box-shadow: 0 10px 26px rgba(15, 23, 42, .08);
         }
 
+        /* TABEL PEMINJAMAN TERBARU LEBIH MODERN */
+        .card-section-header {
+            border-radius: 14px 14px 0 0;
+            padding: 10px 18px;
+            background: linear-gradient(120deg, #e0f2fe, #eef2ff);
+            border-bottom: 1px solid #dbeafe;
+        }
+
+        .card-section-header h6 {
+            margin: 0;
+            font-weight: 600;
+            font-size: .95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #0f172a;
+        }
+
+        .card-section-header small {
+            font-size: .78rem;
+            color: #6b7280;
+        }
+
+        .table-modern {
+            margin-bottom: 0;
+        }
+
         .table-modern thead {
             background: #0f172a;
             color: #e5e7eb;
@@ -104,7 +161,7 @@ $peminjaman_terbaru = mysqli_query($conn, "
 
         .table-modern thead th {
             border: none;
-            font-size: .82rem;
+            font-size: .8rem;
             text-transform: uppercase;
             letter-spacing: .04em;
         }
@@ -115,8 +172,42 @@ $peminjaman_terbaru = mysqli_query($conn, "
             border-color: #e5e7eb;
         }
 
-        .row-hover tbody tr:hover {
+        .table-modern tbody tr:nth-child(odd) {
             background: #f9fafb;
+        }
+
+        .table-modern tbody tr:hover {
+            background: #e5f2ff;
+        }
+
+        .kode-pill {
+            border-radius: 999px;
+            padding: .12rem .65rem;
+            font-size: .78rem;
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .status-badge {
+            border-radius: 999px;
+            padding: .18rem .7rem;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        .status-badge.dipinjam {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .status-badge.terlambat {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-badge.dikembalikan {
+            background: #dcfce7;
+            color: #166534;
         }
 
         /* PERINGATAN BERGERAK */
@@ -186,7 +277,6 @@ $peminjaman_terbaru = mysqli_query($conn, "
                             <i class="bi bi-megaphone-fill me-1"></i>Request Buku
                         </a>
                     </li>
-
                     <li class="nav-item d-none d-lg-block ms-2">
                         <span class="text-light small me-2">
                             <i class="bi bi-person-circle me-1"></i><?php echo htmlspecialchars($_SESSION['nama_lengkap']); ?>
@@ -215,45 +305,45 @@ $peminjaman_terbaru = mysqli_query($conn, "
         <!-- Statistik -->
         <div class="row g-3 mb-4">
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-card total-buku">
                     <div>
-                        <div class="text-muted small mb-1">Total Buku</div>
-                        <div class="fs-3 fw-semibold"><?php echo $total_buku; ?></div>
+                        <div class="label">Total Buku</div>
+                        <div class="value"><?php echo $total_buku; ?></div>
                     </div>
-                    <div class="stat-icon" style="background:#3b82f6;">
+                    <div class="stat-icon">
                         <i class="bi bi-book"></i>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-card total-anggota">
                     <div>
-                        <div class="text-muted small mb-1">Total Anggota</div>
-                        <div class="fs-3 fw-semibold"><?php echo $total_anggota; ?></div>
+                        <div class="label">Total Anggota</div>
+                        <div class="value"><?php echo $total_anggota; ?></div>
                     </div>
-                    <div class="stat-icon" style="background:#22c55e;">
+                    <div class="stat-icon">
                         <i class="bi bi-people"></i>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-card sedang-dipinjam">
                     <div>
-                        <div class="text-muted small mb-1">Sedang Dipinjam</div>
-                        <div class="fs-3 fw-semibold"><?php echo $total_peminjaman; ?></div>
+                        <div class="label">Sedang Dipinjam</div>
+                        <div class="value"><?php echo $total_peminjaman; ?></div>
                     </div>
-                    <div class="stat-icon" style="background:#facc15;">
+                    <div class="stat-icon">
                         <i class="bi bi-arrow-repeat"></i>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-sm-6 col-lg-3">
-                <div class="stat-card">
+                <div class="stat-card terlambat">
                     <div>
-                        <div class="text-muted small mb-1">Terlambat</div>
-                        <div class="fs-3 fw-semibold"><?php echo $total_terlambat; ?></div>
+                        <div class="label">Terlambat</div>
+                        <div class="value"><?php echo $total_terlambat; ?></div>
                     </div>
-                    <div class="stat-icon" style="background:#ef4444;">
+                    <div class="stat-icon">
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
                 </div>
@@ -262,15 +352,16 @@ $peminjaman_terbaru = mysqli_query($conn, "
 
         <!-- Peminjaman Terbaru -->
         <div class="card-section mb-4">
-            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-semibold">
-                    <i class="bi bi-clock-history me-1 text-primary"></i>Peminjaman Terbaru
-                </h6>
-                <small class="text-muted">5 transaksi terakhir</small>
+            <div class="card-section-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history text-primary"></i>
+                    <h6 class="mb-0">Peminjaman Terbaru</h6>
+                </div>
+                <small>5 transaksi terakhir</small>
             </div>
             <div class="card-body pt-2">
                 <div class="table-responsive">
-                    <table class="table table-modern row-hover mb-0">
+                    <table class="table table-modern mb-0">
                         <thead>
                             <tr>
                                 <th>Kode</th>
@@ -284,19 +375,24 @@ $peminjaman_terbaru = mysqli_query($conn, "
                         <tbody>
                             <?php if (mysqli_num_rows($peminjaman_terbaru) > 0): ?>
                                 <?php while ($row = mysqli_fetch_assoc($peminjaman_terbaru)): ?>
+                                    <?php
+                                    $statusClass = strtolower($row['status']);
+                                    if ($statusClass !== 'dipinjam' && $statusClass !== 'terlambat' && $statusClass !== 'dikembalikan') {
+                                        $statusClass = 'dipinjam';
+                                    }
+                                    ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars($row['kode_buku']); ?></td>
+                                        <td>
+                                            <span class="kode-pill">
+                                                <?php echo htmlspecialchars($row['kode_buku']); ?>
+                                            </span>
+                                        </td>
                                         <td class="fw-semibold"><?php echo htmlspecialchars($row['judul_buku']); ?></td>
                                         <td><?php echo htmlspecialchars($row['nama_lengkap']); ?></td>
                                         <td><?php echo date('d/m/Y', strtotime($row['tanggal_pinjam'])); ?></td>
                                         <td><?php echo date('d/m/Y', strtotime($row['tanggal_kembali'])); ?></td>
                                         <td>
-                                            <?php
-                                            $badge = 'success';
-                                            if ($row['status'] == 'terlambat') $badge = 'danger';
-                                            elseif ($row['status'] == 'dipinjam') $badge = 'warning';
-                                            ?>
-                                            <span class="badge text-bg-<?php echo $badge; ?>">
+                                            <span class="status-badge <?php echo $statusClass; ?>">
                                                 <?php echo ucfirst($row['status']); ?>
                                             </span>
                                         </td>

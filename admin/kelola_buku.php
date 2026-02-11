@@ -1,12 +1,15 @@
 <?php
 require_once '../config.php';
 
+
 if (!is_logged_in() || !is_admin()) {
     redirect('../index.php');
 }
 
+
 $success = '';
 $error   = '';
+
 
 // TAMBAH BUKU
 if (isset($_POST['tambah_buku'])) {
@@ -19,7 +22,8 @@ if (isset($_POST['tambah_buku'])) {
     $jumlah_buku  = clean_input($_POST['jumlah_buku']);
     $lokasi_rak   = clean_input($_POST['lokasi_rak']);
 
-    $query = "INSERT INTO buku (kode_buku, judul_buku, pengarang, penerbit, tahun_terbit, kategori, jumlah_buku, stok_tersedia, lokasi_rak) 
+
+    $query = "INSERT INTO buku (kode_buku, judul_buku, pengarang, penerbit, tahun_terbit, kategori, jumlah_buku, stok_tersedia, lokasi_rak)
               VALUES ('$kode_buku','$judul_buku','$pengarang','$penerbit','$tahun_terbit','$kategori','$jumlah_buku','$jumlah_buku','$lokasi_rak')";
     if (mysqli_query($conn, $query)) {
         $success = 'Buku berhasil ditambahkan!';
@@ -27,6 +31,7 @@ if (isset($_POST['tambah_buku'])) {
         $error = 'Gagal menambahkan buku!';
     }
 }
+
 
 // EDIT BUKU
 if (isset($_POST['edit_buku'])) {
@@ -41,7 +46,8 @@ if (isset($_POST['edit_buku'])) {
     $stok_tersedia = clean_input($_POST['stok_tersedia']);
     $lokasi_rak   = clean_input($_POST['lokasi_rak']);
 
-    $query = "UPDATE buku SET 
+
+    $query = "UPDATE buku SET
                 kode_buku='$kode_buku',
                 judul_buku='$judul_buku',
                 pengarang='$pengarang',
@@ -59,6 +65,7 @@ if (isset($_POST['edit_buku'])) {
     }
 }
 
+
 // HAPUS BUKU
 if (isset($_GET['hapus'])) {
     $id    = $_GET['hapus'];
@@ -70,6 +77,7 @@ if (isset($_GET['hapus'])) {
     }
 }
 
+
 // DATA BUKU
 $search = isset($_GET['search']) ? clean_input($_GET['search']) : '';
 $where  = $search
@@ -79,6 +87,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
 ?>
 <!doctype html>
 <html lang="id">
+
 
 <head>
     <meta charset="utf-8">
@@ -92,9 +101,11 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
             font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
         }
 
+
         .navbar-app {
             background: linear-gradient(120deg, #1f2937, #111827);
         }
+
 
         .navbar-app .navbar-brand,
         .navbar-app .nav-link {
@@ -102,20 +113,24 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
             font-weight: 500;
         }
 
+
         .navbar-app .nav-link.active,
         .navbar-app .nav-link:hover {
             color: #ffffff !important;
         }
 
+
         .page-wrapper {
             padding: 24px 16px 32px;
         }
+
 
         @media(min-width:992px) {
             .page-wrapper {
                 padding: 28px 40px 40px;
             }
         }
+
 
         .card-shell {
             border: none;
@@ -124,10 +139,12 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
             box-shadow: 0 10px 26px rgba(15, 23, 42, .08);
         }
 
+
         .table-modern thead {
             background: #0f172a;
             color: #e5e7eb;
         }
+
 
         .table-modern thead th {
             border: none;
@@ -136,25 +153,30 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
             letter-spacing: .04em;
         }
 
+
         .table-modern tbody td {
             font-size: .9rem;
             vertical-align: middle;
             border-color: #e5e7eb;
         }
 
+
         .row-hover tbody tr:hover {
             background: #f9fafb;
         }
 
+
         .search-small {
             max-width: 220px;
         }
+
 
         .search-small input {
             font-size: .82rem;
             border-radius: 999px;
             padding-left: 2rem;
         }
+
 
         .search-small .icon {
             position: absolute;
@@ -167,7 +189,9 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
     </style>
 </head>
 
+
 <body>
+
 
     <nav class="navbar navbar-expand-lg navbar-app shadow-sm">
         <div class="container-fluid px-3 px-lg-4">
@@ -190,6 +214,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
                         </a>
                     </li>
 
+
                     <li class="nav-item d-none d-lg-block ms-2">
                         <a href="../logout.php" class="btn btn-outline-light btn-sm rounded-pill">
                             <i class="bi bi-box-arrow-right me-1"></i>Logout
@@ -200,6 +225,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
         </div>
     </nav>
 
+
     <div class="page-wrapper">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
             <div>
@@ -207,6 +233,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
                 <small class="text-muted">Tambah, ubah, dan hapus data buku perpustakaan.</small>
             </div>
         </div>
+
 
         <!-- Toolbar -->
         <div class="card-shell mb-3">
@@ -225,6 +252,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
             </div>
         </div>
 
+
         <?php if ($success): ?>
             <div class="alert alert-success alert-dismissible fade show small">
                 <?php echo $success; ?>
@@ -237,6 +265,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         <?php endif; ?>
+
 
         <!-- Tabel Buku -->
         <div class="card-shell">
@@ -289,6 +318,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
             </div>
         </div>
     </div>
+
 
     <!-- Modal Tambah -->
     <div class="modal fade" id="tambahModal" tabindex="-1">
@@ -350,6 +380,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
         </div>
     </div>
 
+
     <!-- Modal Edit -->
     <div class="modal fade" id="editModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -409,6 +440,7 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
         </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function editBuku(data) {
@@ -426,5 +458,6 @@ $buku = mysqli_query($conn, "SELECT * FROM buku $where ORDER BY id DESC");
         }
     </script>
 </body>
+
 
 </html>
